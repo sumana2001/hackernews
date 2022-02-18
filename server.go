@@ -1,14 +1,17 @@
 package main
 
 import (
+	"github.com/sumana2001/hackernews/graph"
+	"github.com/sumana2001/hackernews/graph/generated"
 	"github.com/sumana2001/hackernews/internal/auth"
+	_ "github.com/sumana2001/hackernews/internal/auth"
+	database "github.com/sumana2001/hackernews/internal/pkg/db/mysql"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/99designs/gqlgen/handler"
-	hackernews "github.com/sumana2001/hackernews"
-	"github.com/sumana2001/hackernews/internal/pkg/db/mysql"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi"
 )
 
@@ -26,7 +29,7 @@ func main() {
 
 	database.InitDB()
 	database.Migrate()
-	server := handler.NewDefaultServer(hackernews.NewExecutableSchema(hackernews.Config{Resolvers: &hackernews.Resolver{}}))
+	server := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", server)
 
